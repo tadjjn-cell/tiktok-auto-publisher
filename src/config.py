@@ -26,9 +26,8 @@ def load_config(config_path: str = "config.yaml") -> dict:
     config["telegram_api_id"] = int(_require_env("TELEGRAM_API_ID"))
     config["telegram_api_hash"] = _require_env("TELEGRAM_API_HASH")
     config["telegram_session"] = _require_env("TELEGRAM_SESSION")
-    config["telegram_source_chat"] = os.getenv("TELEGRAM_SOURCE_CHAT") or config.get(
-        "telegram", {}
-    ).get("source_chat", "")
+    source_chat = os.getenv("TELEGRAM_SOURCE_CHAT") or config.get("telegram", {}).get("source_chat", "")
+    config["telegram_source_chat"] = _parse_chat_id(source_chat)
 
     config["tiktok_client_key"] = _require_env("TIKTOK_CLIENT_KEY")
     config["tiktok_client_secret"] = _require_env("TIKTOK_CLIENT_SECRET")
@@ -36,6 +35,14 @@ def load_config(config_path: str = "config.yaml") -> dict:
     config["tiktok_refresh_token"] = _require_env("TIKTOK_REFRESH_TOKEN")
 
     return config
+
+
+def _parse_chat_id(value: str):
+    """Telethon needs an int for numeric chat/channel ids (e.g. -1004438061540), not a str."""
+    try:
+        return int(value)
+    except (ValueError, TypeError):
+        return value
 
 
 def _require_env(name: str) -> str:
