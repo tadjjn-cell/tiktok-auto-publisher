@@ -1,0 +1,26 @@
+# Telegram (secrets like API id/hash/session live in .env or GitHub Secrets)
+telegram:
+  source_chat: "" # numeric chat id of your dedicated "TikTok Queue" channel (see setup/list_telegram_chats.py)
+
+# TikTok upload defaults
+tiktok:
+  privacy_level: "SELF_ONLY" # SELF_ONLY | PUBLIC_TO_EVERYONE | MUTUAL_FOLLOW_FRIENDS | FOLLOWER_OF_CREATOR
+  # NOTE: TikTok itself forces SELF_ONLY for unaudited apps regardless of what you set here,
+  # until your app passes TikTok's audit for the Content Posting API.
+
+# AI Configuration (Groq, free tier)
+ai:
+  text_model: "openai/gpt-oss-120b"
+
+# Trending signal
+keywords:
+  max_trending: 10 # Google Trends rising/top related queries to feed the AI
+
+# Safety limits
+limits:
+  max_uploads_per_run: 3
+
+# Paths (relative to project root)
+paths:
+  state_file: "data/state.json"
+  downloads_dir: "downloads"
