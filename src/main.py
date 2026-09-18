@@ -9,7 +9,7 @@ from src.telegram_source import fetch_new_videos
 from src.trends import get_trending_queries
 from src.caption_generator import generate_tiktok_caption
 from src.tiktok_auth import refresh_access_token
-from src.tiktok_uploader import upload_video
+from src.tiktok_uploader import upload_to_drafts, upload_direct_post
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
@@ -55,6 +55,7 @@ async def main() -> None:
         source_chat = config["telegram_source_chat"]
         max_trending = config.get("keywords", {}).get("max_trending", 10)
         privacy_level = config.get("tiktok", {}).get("privacy_level", "SELF_ONLY")
+        mode = config.get("tiktok", {}).get("mode", "draft")
 
         for video in videos:
             topic = video["caption"] or "video"
@@ -64,16 +65,21 @@ async def main() -> None:
                 result = await generate_tiktok_caption(topic, trending, config)
                 caption = build_caption(result["caption"], result["hashtags"])
 
-                publish_id = await asyncio.to_thread(
-                    upload_video,
-                    access_token,
-                    video["file_path"],
-                    caption,
-                    privacy_level,
-                )
-
-                logger.info(f"Published to TikTok: {publish_id}")
-                await notify(client, source_chat, f"✅ Posted to TikTok:\n{caption[:200]}")
+                if mode == "draft":
+                    publish_id = await asyncio.to_thread(upload_to_drafts, access_token, video["file_path"])
+                    logger.info(f"Uploaded to TikTok drafts: {publish_id}")
+                    await notify(
+                        client,
+                        source_chat,
+                        "📥 Video is in your TikTok drafts. Open TikTok, paste this caption, tap Post:\n\n"
+                        f"{caption}",
+                    )
+                else:
+                    publish_id = await asyncio.to_thread(
+                        upload_direct_post, access_token, video["file_path"], caption, privacy_level
+                    )
+                    logger.info(f"Published to TikTok: {publish_id}")
+                    await notify(client, source_chat, f"✅ Posted to TikTok:\n{caption[:200]}")
 
             except Exception as e:
                 logger.error(f"Failed to process message {video['message_id']}: {e}")

@@ -4,13 +4,14 @@
 
 ---
 
-## ⚠️ فرق مهم مع YouTube: TikTok Audit
+## ⚠️ فرق مهم مع YouTube: TikTok Audit → عندنا Draft mode
 
-TikTok، خلاف Google، كيقيّد الـ Content Posting API:
-- **Unaudited app** (قبل ما يوافق عليها TikTok): الفيديوهات كيتنشرو **"SELF_ONLY"** (خاص بيك، ماشي عام) بغض النظر على شنو تحط فـ config.
-- بش تنشر **عام** (public)، خاصك تدير "App Review / Audit" فـ TikTok for Developers — هادشي كيتطلب وقت (أيام لـ أسابيع) وكيتطلب تعبئة تفاصيل على التطبيق ديالك.
+TikTok، خلاف Google، كيقيّد الـ Direct Post API:
+- **Unaudited app**: أي فيديو كيتنشر عبر API كيولي **"Only me"** (خاص بيك) وكيبقى هاكا، والـ audit كياخد أيام لـ أسابيع.
 
-الخبر الزوين: بحال أنت غير كتنشر لـ compte ديالك (ماشي app عمومي لناس آخرين)، الفيديوهات غادي تولي private فبدايتها، ومنبعد نديرو audit request بش توليو public.
+**الحل ديالنا (`mode: "draft"` فـ config.yaml):** الفيديو كيتصيفط لـ **Drafts** ديال TikTok (Upload API، scope `video.upload`)، وكيوصلك فـ Telegram الـ caption + hashtags جاهزين. نتا كتحل TikTok، كتلصق الـ caption، وكتضغط **Post** (10 ثواني) → الفيديو **public** دغيا، بلا انتظار audit.
+
+بالتوازي دير طلب Audit (الخطوة 6). مورا ما TikTok يوافق: بدّل `mode` لـ `"direct"` و `privacy_level` لـ `"PUBLIC_TO_EVERYONE"` وكلشي يولي automatique بالكامل.
 
 ---
 

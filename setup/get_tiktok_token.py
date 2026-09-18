@@ -20,7 +20,7 @@ redirect_uri = input("Redirect URI (must match your TikTok app's registered redi
 auth_url = (
     "https://www.tiktok.com/v2/auth/authorize/"
     f"?client_key={urllib.parse.quote(client_key)}"
-    "&scope=user.info.basic,video.publish"
+    "&scope=user.info.basic,video.upload,video.publish"
     "&response_type=code"
     f"&redirect_uri={urllib.parse.quote(redirect_uri)}"
     "&state=setup"

@@ -4,9 +4,11 @@ telegram:
 
 # TikTok upload defaults
 tiktok:
-  privacy_level: "SELF_ONLY" # SELF_ONLY | PUBLIC_TO_EVERYONE | MUTUAL_FOLLOW_FRIENDS | FOLLOWER_OF_CREATOR
-  # NOTE: TikTok itself forces SELF_ONLY for unaudited apps regardless of what you set here,
-  # until your app passes TikTok's audit for the Content Posting API.
+  mode: "draft" # draft = upload to your TikTok drafts, you tap Post in the app (works public today, no audit needed)
+  #               direct = publish straight from the API (only private "Only me" until TikTok audits your app)
+  privacy_level: "SELF_ONLY" # direct mode only: SELF_ONLY | PUBLIC_TO_EVERYONE | MUTUAL_FOLLOW_FRIENDS | FOLLOWER_OF_CREATOR
+  # NOTE: TikTok forces SELF_ONLY in direct mode for unaudited apps regardless of this setting.
+  # After the audit passes, switch mode to "direct" and privacy_level to PUBLIC_TO_EVERYONE.
 
 # AI Configuration (Groq, free tier)
 ai:
