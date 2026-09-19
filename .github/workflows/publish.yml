@@ -16,6 +16,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Queued runs must start from the latest state, not the commit that existed when they were triggered.
+          ref: ${{ github.event.repository.default_branch }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -44,4 +47,7 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
           git add data/state.json
           git diff --staged --quiet || git commit -m "chore: update processed message state / rotated refresh token"
-          git push
+          for i in 1 2 3 4 5; do
+            git pull --rebase -X theirs origin ${{ github.event.repository.default_branch }} && git push && break
+            echo "push failed (attempt $i), retrying..."; sleep $((i * 3))
+          done
