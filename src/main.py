@@ -68,11 +68,13 @@ async def main() -> None:
                 if mode == "draft":
                     publish_id = await asyncio.to_thread(upload_to_drafts, access_token, video["file_path"])
                     logger.info(f"Uploaded to TikTok drafts: {publish_id}")
+                    safe_caption = caption.replace("`", "'")
                     await notify(
                         client,
                         source_chat,
-                        "📥 Video is in your TikTok drafts. Open TikTok, paste this caption, tap Post:\n\n"
-                        f"{caption}",
+                        "📥 Video is in your TikTok drafts. Tap the caption below to copy it, "
+                        "then open the draft in TikTok, paste, and tap Post:\n\n"
+                        f"```\n{safe_caption}\n```",
                     )
                 else:
                     publish_id = await asyncio.to_thread(
