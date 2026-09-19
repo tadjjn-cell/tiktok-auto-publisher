@@ -46,7 +46,7 @@ def _parse_chat_id(value: str):
 
 
 def _require_env(name: str) -> str:
-    value = os.getenv(name, "")
+    value = os.getenv(name, "").strip()
     if not value:
         raise ValueError(f"Missing required environment variable: {name}")
     return value
@@ -70,8 +70,10 @@ async def call_groq_with_retry(client: AsyncOpenAI, max_retries: int = 3, **kwar
         except APITimeoutError:
             logger.warning(f"Groq timeout (attempt {attempt + 1}/{max_retries})")
             await asyncio.sleep(1)
-        except APIConnectionError:
-            logger.warning(f"Groq connection error. Waiting 5s (attempt {attempt + 1}/{max_retries})")
+        except APIConnectionError as e:
+            logger.warning(
+                f"Groq connection error ({e.__cause__!r}). Waiting 5s (attempt {attempt + 1}/{max_retries})"
+            )
             await asyncio.sleep(5)
 
     raise Exception(f"Groq API failed after {max_retries} retries")
